@@ -1,12 +1,12 @@
-# India Java Jobs Monitor
+# India Jobs Monitor - Business Analyst · Data Analyst · Product Manager
 
-A free, serverless job alert for **Java backend / Senior Software Engineer roles in India**,
-tuned for **~6 years of experience** (SDE II → Senior → Lead).
+A free, serverless job alert for **Business Analyst, Senior Business Analyst, Data / BI
+Analyst and Product Manager roles in India**, tuned for **4+ years of experience**.
 
-Every two hours it checks LinkedIn, Naukri, Indeed India and the careers sites of ~90
-companies hiring Java engineers in India. Every **new** matching posting is sent to your
-**Discord** channel with a direct apply link, and a **web dashboard** lets you track what
-you have applied to.
+Every two hours it checks LinkedIn, Naukri, Indeed India and the careers sites of ~85
+companies that hire in India. Every **new** matching posting is sent to your **Discord**
+channel with a direct apply link, and a **web dashboard** lets you track what you have
+applied to.
 
 There is no server and no cost: it runs entirely on GitHub Actions and GitHub Pages.
 
@@ -15,16 +15,28 @@ There is no server and no cost: it runs entirely on GitHub Actions and GitHub Pa
         │
         ▼
  Fetch postings ─── LinkedIn · Naukri · Indeed India           (job boards)
-        │       ─── Amazon · Google · Nvidia · Adobe · Cisco …  (big tech)
-        │       ─── Citi · Barclays · Mastercard · Wells Fargo … (bank GCCs)
-        │       ─── Okta · MongoDB · Databricks · Paytm · Meesho … (product cos)
+        │       ─── Amazon · Google · Adobe · Cisco · eBay …   (big tech)
+        │       ─── Citi · Barclays · Mastercard · Wells Fargo … (banks & fintech GCCs)
+        │       ─── Okta · MongoDB · Paytm · Meesho · Accenture … (product cos & services)
         ▼
- Filter: India location · Java/backend/SWE title · SDE II → Lead · 2–10 yrs asked
+ Filter: India location · BA / Data / Product title · Analyst → Senior → Lead · 2–8 yrs asked
         ▼
  Compare with docs/data/jobs.json  ──►  only NEW jobs  ──►  Discord alert
         ▼
  Commit jobs.json back to the repo  ──►  Dashboard (GitHub Pages) updates
 ```
+
+## Quick start (the short version)
+
+1. **Discord:** make a channel → *Edit Channel → Integrations → Webhooks → New Webhook → Copy URL*.
+2. **GitHub secret:** repo → *Settings → Secrets and variables → Actions → New repository secret*
+   → name `DISCORD_WEBHOOK_URL`, value = the URL.
+3. **Permissions:** repo → *Settings → Actions → General → Workflow permissions* → **Read and write**.
+4. **First run:** *Actions* tab → **Full sweep (every 2h)** → **Run workflow**. (This first run is silent; it just remembers today's jobs.)
+5. **Dashboard:** *Settings → Pages* → Branch `main`, folder `/docs`.
+
+Done - from the next scan on, new jobs land in Discord. Details for every step are in
+[Setup](#2-setup-15-minutes) below.
 
 ---
 
@@ -53,17 +65,24 @@ There is no server and no cost: it runs entirely on GitHub Actions and GitHub Pa
 | Rule | Kept | Dropped |
 |---|---|---|
 | **Location** | Any Indian city (Bengaluru, Hyderabad, Pune, Chennai, Gurugram, Noida, Mumbai…), "India", "Remote – India" | Everything outside India, and unlabelled "Remote" on global boards |
-| **Role** | Java / Spring / J2EE, Backend, Software Engineer / Developer, SDE, Full-stack (if Java), Platform, Distributed Systems | Frontend, mobile, QA/SDET, DevOps/SRE, data/ML, security, embedded; titles naming another stack (Go, Python, .NET, Node…) unless Java is also named |
-| **Level** | SDE II / mid, Senior / SDE III, Lead / Tech Lead | Intern, fresher, SDE I, Associate; Principal, Architect, Manager, Director. Staff is off by default |
-| **Experience** | Posting asks for 2–10 years, or doesn't say | Asks for 0–1 years, or 11+ years |
+| **Role** | Business Analyst, Business Systems / Technical BA, Data Analyst, BI / Analytics (analyst, developer, engineer), Product Analyst, Product Manager, Product Owner | Generic "Analyst" titles (financial, credit, risk, security, research, fraud); software / data engineers, data scientists, ML; project / program managers |
+| **Level** | Analyst / PM, Senior (Sr. BA, Senior Data Analyst, Senior PM), Lead / Manager | Intern, trainee, fresher, graduate, *Associate* Product Manager / Business Analyst, "Analyst I"; Director, VP, Head of. Principal / Staff are off by default |
+| **Experience** | Posting asks for 2–8 years, or doesn't say | Asks for 0–1 years, or 9+ years |
 
 Each match is put in one of three **tiers** (shown in Discord and the dashboard):
 
 | Tier | Examples |
 |---|---|
-| 🛠 **SDE II / Mid** | SDE II, Software Engineer II, Java Developer, Software Engineer |
-| 🚀 **Senior / SDE III** | Senior Software Engineer, Sr. Java Developer, SDE III, SMTS |
-| 🧭 **Lead / Staff** | Lead Software Engineer, Java Tech Lead, Staff (only with `--include-staff`) |
+| 📊 **Analyst / PM** | Business Analyst, Data Analyst, Product Manager, Business Analyst II, Product Owner |
+| 🚀 **Senior Analyst / Sr PM** | Senior Business Analyst, Sr. BA, Senior Data Analyst, Senior Product Manager, Assistant Manager – Analytics |
+| 🧭 **Lead / Manager** | Lead Business Analyst, Analytics Manager, Group Product Manager, Senior Manager – Product |
+
+Each posting also gets a **role** label for the dashboard filter: *Business Analyst*,
+*Data / BI Analyst*, *Product (PM / Owner / Analyst)*.
+
+> **Heads-up on seniority:** with no level in the title, a Product Manager lands in the
+> first tier. In India a plain "Product Manager" often wants 4-7 years, so don't skip it.
+> Use the **Experience** filter on the dashboard to sort by what each posting asks for.
 
 All of these rules live in one file, [`monitor/filters.py`](monitor/filters.py), as plain
 regular expressions — see [Customising](#4-customising) to change them.
@@ -99,7 +118,7 @@ regular expressions — see [Customising](#4-customising) to change them.
 A webhook is a URL that lets the scanner post messages into one Discord channel.
 
 1. In Discord, create a server if you don't have one (**+** in the left bar → *Create My Own*).
-2. Create a channel for alerts, e.g. `#java-jobs`.
+2. Create a channel for alerts, e.g. `#job-alerts`.
 3. Hover the channel → ⚙ **Edit Channel** → **Integrations** → **Webhooks** → **New Webhook**.
 4. Give it a name (e.g. *Job Monitor*), then click **Copy Webhook URL**.
    It looks like `https://discord.com/api/webhooks/1234567890/AbCdEf...`
@@ -142,8 +161,8 @@ That's it — the schedules in `.github/workflows/` now run automatically.
    one line per source, then a summary:
 
    ```
-     ✓ Citi: 283 raw postings over 3 searches
-     ✓ LinkedIn (JobSpy): 640 raw postings over 9 searches
+     ✓ Citi: 283 raw postings over 4 searches
+     ✓ LinkedIn (JobSpy): 640 raw postings over 10 searches
      ! SomeCompany: FAILED - 404 ...
    4100 raw -> 850 in scope -> 850 new (seed run: notifications suppressed)
    ```
@@ -192,7 +211,7 @@ The token is stored only in your browser's localStorage and is only ever sent to
 - Identical openings (same company + title + city, posted as many separate requisitions)
   are folded into one row with an **N openings** badge — click it to see them all.
 - The **Location** filter groups postings by city (Bengaluru, Pune, Delhi NCR…); a posting naming several cities appears under each.
-- The **Experience** filter (`≤ 6 yrs asked` etc.) uses the years the posting states,
+- The **Experience** filter (`≤ 5 yrs asked` etc.) uses the years the posting states,
   when it states them.
 
 ---
@@ -224,7 +243,7 @@ other:
     host: acmebank.wd5.myworkdayjobs.com   # from the URL
     tenant: acmebank                       # the part before .wd5
     site: AcmeCareers                      # the part after the host
-    searches: *search_terms                # java / software engineer / backend
+    searches: *search_terms                # business analyst / data analyst / product manager / BI
 ```
 
 Workday boards are **automatically restricted to India** (the fetcher looks up the board's
@@ -240,18 +259,20 @@ every two hours.
 ### Change the job-board searches
 
 The `aggregators:` section at the bottom of `companies.yaml` holds the LinkedIn / Naukri /
-Indeed search terms (`senior java developer`, `java spring boot microservices`, …).
+Indeed search terms (`senior business analyst`, `data analyst`, `product manager`, …).
 Add or remove phrases; each phrase is one search per board per run.
 
-### Change the experience band, levels or tech stack — `monitor/filters.py`
+### Change the experience band, levels or roles — `monitor/filters.py`
 
 | Want to… | Change |
 |---|---|
-| Accept roles asking up to 12 years | `YOE_MAX = 12` |
+| Accept roles asking up to 10 years | `YOE_MAX = 10` |
 | Drop roles asking for less than 4 years | `YOE_MIN = 4` |
-| Include Staff engineer roles | Add `--include-staff` to the `python -m monitor.main` lines in the workflows |
-| Allow Kotlin/Go/Python titles too | Remove the language from `OTHER_STACK` |
-| Allow DevOps / SRE titles | Remove `devops\|site reliability\|\bsre\b` from `ROLE_EXCLUDE` |
+| Include Principal / Staff titles | Add `--include-staff` to the `python -m monitor.main` lines in the workflows |
+| Add a role (say *Product Operations*) | Add it to `ROLE_INCLUDE` |
+| Allow generic "Analyst" titles | Add `analyst` to `ROLE_INCLUDE` and expect a lot of finance / risk noise |
+| Allow *Associate Product Manager* | Remove the `associate` and `\bapm\b` parts from `JUNIOR` |
+| Stop skipping Data Scientist titles | Remove `scientist` from `ROLE_EXCLUDE` and add `data scien` to `ROLE_INCLUDE` |
 | Add a city | Add it to `INDIA_HINT` |
 
 Run `python -m pytest tests -q` after editing to make sure nothing else broke.
@@ -289,7 +310,7 @@ python -m pytest tests -q
 | `--tier bigtech\|other\|all` | Which section of `companies.yaml` to scan |
 | `--dry-run` | Print results; save nothing, send nothing |
 | `--no-notify` | Save new jobs but don't message Discord (useful after widening filters) |
-| `--include-staff` | Also accept Staff-level titles |
+| `--include-staff` | Also accept Principal / Staff-level titles |
 
 To view the dashboard locally: `python -m http.server -d docs 8000` and open <http://localhost:8000>.
 
@@ -344,6 +365,58 @@ GitHub Actions is free for public repos. For private repos the free plan include
 rate-limit pacing) and a big-tech scan about 2, so the default schedule uses about
 4,500 minutes a month. On a private repo, run the full sweep every 4–6 hours instead.
 
+### If the workflow file is missing (adding it yourself)
+
+The repo ships with the workflows, so normally you do nothing. If you copied only part of
+the repo, or deleted one by accident, you can recreate the main one in the browser:
+
+1. On GitHub open your repo → **Add file** → **Create new file**.
+2. In the name box type `.github/workflows/scan-all.yml` (typing the `/` makes the folders).
+3. Paste this starter version:
+
+```yaml
+name: Full sweep (every 2h)
+
+on:
+  schedule:
+    - cron: "30 */2 * * *"       # every 2 hours at :30 UTC
+  workflow_dispatch:             # adds the "Run workflow" button
+
+permissions:
+  contents: write                # lets the scan commit jobs.json
+
+concurrency:
+  group: job-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run full sweep
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          JOBSPY_PROXIES: ${{ secrets.JOBSPY_PROXIES }}
+        run: python -m monitor.main --tier all
+      - name: Commit state
+        run: |
+          git config user.name "job-monitor-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/data/jobs.json
+          git diff --cached --quiet || (git commit -m "scan(all): update jobs.json" && git push)
+```
+
+4. Click **Commit changes**, then open the **Actions** tab and run it once by hand.
+
+The shipped `scan-all.yml` is the same idea plus a retry-and-merge loop for the rare case
+where two writers push at once; prefer it when you have it.
+
 ---
 
 ## 7. Troubleshooting
@@ -367,7 +440,7 @@ rate-limit pacing) and a big-tech scan about 2, so the default schedule uses abo
 config/companies.yaml        ← the companies & job-board searches (edit this most)
 monitor/
   main.py                    ← entry point: fetch → filter → dedupe → save → notify
-  filters.py                 ← India / Java / seniority / experience rules
+  filters.py                 ← India / BA-Data-Product role / seniority / experience rules
   profiles.py                ← tracker settings (config file, data file, tiers, webhook)
   state.py                   ← reads/writes docs/data/jobs.json; never overwrites your marks
   notify.py                  ← Discord messages

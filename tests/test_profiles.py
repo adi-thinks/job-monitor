@@ -127,3 +127,34 @@ def test_company_names_are_unique():
     names = [c["name"] for sec in ("bigtech", "other", "aggregators")
              for c in cfg.get(sec) or []]
     assert len(names) == len(set(names))
+
+
+# ---- Amazon category -------------------------------------------------------
+
+def _amazon_url(monkeypatch, cfg):
+    """Run the Amazon fetcher against a stub and return the URL it asked for."""
+    from monitor.fetchers import custom
+    seen = {}
+    monkeypatch.setattr(custom, "session", lambda: None)
+    monkeypatch.setattr(custom, "get_json",
+                        lambda s, url: seen.setdefault("url", url) and {"jobs": []})
+    custom.amazon(cfg)
+    return seen["url"]
+
+
+def test_amazon_defaults_to_the_software_category(monkeypatch):
+    assert "category%5B%5D=software-development" in _amazon_url(monkeypatch, {"search": "x"})
+
+
+def test_amazon_with_empty_categories_searches_everything(monkeypatch):
+    """Analyst and product roles are not 'software-development'."""
+    url = _amazon_url(monkeypatch, {"search": "business analyst", "categories": []})
+    assert "category" not in url
+    assert "base_query=business+analyst" in url
+    assert "country%5B%5D=IND" in url
+
+
+def test_the_shipped_amazon_entry_searches_every_category():
+    cfg = main.load_config(profiles.get(profiles.DEFAULT).config_path)
+    amazon = next(c for c in cfg["bigtech"] if c["fetcher"] == "amazon")
+    assert amazon["categories"] == []

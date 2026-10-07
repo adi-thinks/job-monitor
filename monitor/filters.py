@@ -1,14 +1,16 @@
 """Role, seniority and India-location filtering.
 
-Scope:
-  - Roles: Java / backend / general software engineering (SDE, SWE, Software
-    Developer, Full-stack with a Java/backend lean, Platform, Distributed
-    Systems). Titles that name a different stack or discipline outright
-    (".NET Developer", "React Engineer", "iOS", "Data Scientist", "QA") are out.
-  - Seniority: tuned for ~6 years of experience - SDE II / mid-level, Senior /
-    SDE III, and Lead / Tech Lead. Interns, freshers, SDE I, and Principal /
-    Architect / Manager / Director titles are excluded. Staff is out by
-    default; `--include-staff` lets it in.
+Scope (India, Business Analyst / Data Analyst / Product Manager track):
+  - Roles: Business Analyst, Business Systems / Technical BA, Data Analyst,
+    BI / Analytics (analyst, developer, engineer), Product Analyst, Product
+    Manager, Product Owner. Engineer, scientist and other "analyst" jobs
+    (financial, credit, security, research...) are out.
+  - Seniority: tuned for ~4+ years of experience - Analyst / PM, Senior
+    Analyst / Senior PM, and Lead / Manager. Interns, freshers, Associate
+    Product Managers, "Analyst I" and Director / VP / Head-of titles are
+    excluded. Principal / Staff are out by default; `--include-staff` lets
+    them in.
+  - Experience: a stated bar of 2-8 years passes (see YOE_MIN / YOE_MAX).
   - Location: India (any city, India-remote, or "India" itself).
 
 Every rule here is a plain regex so it is easy to widen or narrow. The test
@@ -17,44 +19,41 @@ suite (tests/test_filters.py) pins the cases each one was written for.
 import re
 
 # ---- role scope ------------------------------------------------------------
+# A title must name one of the target jobs. Generic "Analyst" is NOT enough:
+# that would admit every credit, risk, equity and security analyst in India.
 ROLE_INCLUDE = re.compile(
-    r"(?<![a-z])java(?![a-z])|j2ee|spring|microservice|kotlin"
-    r"|software|\bswe\b|\bsde\b|developer|programmer"
-    r"|back.?end|full.?stack|platform engineer|distributed systems"
-    r"|member of technical staff|\bmts\b|\bsmts\b|\blmts\b"
-    r"|product engineer|\bsde\s*[- ]?(i{2,3}|iv|[234])\b",
+    # business analysis
+    r"business\s+(systems?\s+)?analy(st|sis)|\bba\b|systems?\s+analyst"
+    r"|functional\s+analyst|techno.?functional"
+    # data / BI / analytics
+    r"|data\s+analy(st|tics)|analytics|business\s+intelligence"
+    r"|\bbi\s+(analyst|developer|engineer|consultant)|reporting\s+analyst"
+    r"|insights?\s+analyst|\bmis\s+analyst|decision\s+analyst"
+    r"|analyst\W+(data|analytics|business\s+(analysis|analytics|intelligence)"
+    r"|product|insights|bi\b|reporting)"
+    # product
+    r"|product\s+(manager|management|owner|lead|analyst)",
     re.I,
 )
 
 ROLE_EXCLUDE = re.compile(
-    # leadership / non-IC above the target band
-    r"principal|distinguished|architect|manager|director|\bvp\b|vice president"
-    r"|head of|chief|fellow|executive|\bcto\b"
-    # not engineering
-    r"|recruit|talent acquisition|sales|accountant|\bhr\b|attorney|counsel|marketing"
-    r"|business analyst|support engineer|customer success|technician"
-    # other disciplines that share the word "engineer" or "developer"
-    r"|\bui\b|\bux\b|\bios\b|android|mobile|flutter|react native"
-    r"|machine learning|\bml\b|\bai\b|data scien|data analyst|deep learning"
-    r"|\bqa\b|quality assurance|\btest\b|\bsdet\b|in test\b|automation tester"
-    r"|data engineer|big ?data engineer|\betl\b|devrel|developer advocate"
-    r"|automation (developer|engineer)|windows|workday developer|\brpa\b"
-    r"|devops|site reliability|\bsre\b|network engineer|security engineer"
-    r"|embedded|firmware|hardware|silicon|asic|fpga|\bvlsi\b|verification"
-    r"|systems? software|\bgpu\b|driver|kernel|boot ?loader|boot sw|\bsoc\b|robotics"
-    r"|electrical|mechanical|civil|manufacturing|facilities"
-    r"|salesforce|\bsap\b|servicenow|oracle apps|mainframe|cobol"
-    r"|game dev|game engineer|unity|unreal",
-    re.I,
-)
-
-# A different stack named in the title. Only disqualifying when Java is NOT
-# also named: "Full Stack Java Developer (React)" stays, "React Developer" and
-# "Backend Engineer (Golang)" go.
-OTHER_STACK = re.compile(
-    r"front.?end|react|angular|\bvue\b|javascript|typescript|\bnode(\.?js)?\b"
-    r"|\.net\b|c#|dot ?net|\bphp\b|laravel|ruby|rails|golang|\bgo\b|python|django"
-    r"|c\+\+|\brust\b|scala|elixir|\bswift\b",
+    # leadership above the target band
+    r"director|\bvp\b|\bavp\b|vice president|head of|chief|fellow|executive"
+    r"|distinguished|\bcto\b|\bcpo\b|\bpresident\b"
+    # engineering and science disciplines that merely mention analytics
+    r"|\b(software|java|python|\.?net|web|mobile|full.?stack|front.?end|back.?end"
+    r"|application|etl|sql|data|ml|ai|devops|cloud|platform|systems?|qa|test"
+    r"|support|solutions?|sales|security|network|hardware|embedded|firmware"
+    r"|infrastructure|reliability)\s+(engineer|developer)s?\b"
+    r"|\bsde\b|\bswe\b|\bsdet\b|\bqa\b|tester|devops|\bsre\b|architect"
+    r"|scientist|machine learning|\bml\b|deep learning"
+    # other kinds of analyst
+    r"|(security|cyber|soc|fraud|risk|credit|compliance|financial|finance|equity"
+    r"|research|investment|treasury|tax|payroll|audit|quantitative|supply chain)"
+    r"\s+analyst"
+    r"|clinical|pharmacovigil|biostat|\bquant\b|actuar|underwrit|auditor"
+    # not these jobs at all
+    r"|recruit|talent acquisition|attorney|counsel|accountant",
     re.I,
 )
 
@@ -62,31 +61,38 @@ OTHER_STACK = re.compile(
 JUNIOR = re.compile(
     r"\bintern(ship)?\b|co-?op\b|trainee|fresher|apprentice|graduate|new ?grad"
     r"|campus|university|entry.?level|early.?career|junior|\bjr\.?\b"
-    r"|master'?s|\bph\.?d\b|\banalyst\b"
-    r"|associate (software|engineer|developer)"
-    r"|(engineer|developer|sde|swe)\s*[- ]?(i|1)\b(?!\s*[-/]?\s*(i|ii|2))"
-    r"|\bsde\s*[- ]?(i|1)\b(?!\s*(i|ii))",
+    r"|master'?s|\bph\.?d\b"
+    # \"Associate Product Manager\" / \"Associate Business Analyst\" are entry
+    # grades. \"Business Analyst - Associate\" and \"Senior Associate\" are not
+    # matched: at banks Associate is a mid grade.
+    r"|(?<!senior )(?<!sr )(?<!sr\. )\bassociate\s+(product|business|data|bi"
+    r"|systems?|functional|analyst)"
+    r"|\bapm\b"
+    # \"Analyst I\", \"Product Manager 1\" - but \"Analyst I/II\" is a band that
+    # reaches II, so it stays.
+    r"|(analyst|product manager|product owner)\s*[- ]?(i|1)\b(?!\s*[-/&]?\s*(i|ii|2)\b)",
     re.I,
 )
 
-STAFF = re.compile(r"(?<!technical )\bstaff\b", re.I)
+# Principal / Staff: above the target band, admitted only by --include-staff.
+STAFF = re.compile(r"(?<!technical )\bstaff\b|\bprincipal\b", re.I)
 
 # ---- tier detection --------------------------------------------------------
-# lead   - Lead / Tech Lead / Staff (only with --include-staff) / SDE III+ at
-#          companies that use III as a lead grade
-# senior - Senior / Sr / SDE III / SE III / SMTS
-# mid    - SDE II / SE II / plain "Software Engineer" with no level marker
-LEAD = re.compile(r"\blead\b|tech lead|team lead|(?<!technical )\bstaff\b|\blmts\b", re.I)
-SENIOR = re.compile(
-    r"\bsenior\b|\bsr\.?\b|\bsmts\b"
-    r"|(engineer|developer|sde|swe)\s*[- ]?(iii|3|iv|4)\b|\bsde\s*[- ]?(iii|3)\b",
+# lead   - Lead / Group PM / Analytics Manager / Senior Manager
+# senior - Senior / Sr / Assistant Manager / Analyst III+
+# mid    - plain "Business Analyst", "Data Analyst", "Product Manager", "... II"
+LEAD = re.compile(
+    r"\blead\b|team lead|\bgroup product manager\b|\bgpm\b"
+    r"|(?<!technical )\bstaff\b|\bprincipal\b"
+    r"|\b(senior|sr\.?)\s+manager\b"
+    r"|\b(analytics|business analysis|insights|data|bi|reporting)\s+manager\b"
+    r"|^\s*manager\b[\s,\-:]+(analytics|business analysis|insights"
+    r"|data analytics|business intelligence|bi\b)",
     re.I)
-
-# Explicit stack signal - used for the role bucket and for sorting Java first.
-# Lookarounds rather than \b: titles like "Software Engineer_Java_Springboot"
-# glue words with underscores, which \b treats as part of the word.
-JAVA = re.compile(r"(?<![a-z])java(?![a-z])|j2ee|(?<![a-z])jee(?![a-z])|spring"
-                  r"|kotlin|(?<![a-z])jvm(?![a-z])", re.I)
+SENIOR = re.compile(
+    r"\bsenior\b|\bsr\.?\b|\bassistant manager\b"
+    r"|(analyst|manager|owner)\s*[- ]?(iii|3|iv|4)\b",
+    re.I)
 
 # ---- India location --------------------------------------------------------
 INDIA_HINT = re.compile(
@@ -137,12 +143,16 @@ def is_india(location: str, country: str = "") -> bool:
 
 
 # ---- role family -----------------------------------------------------------
-# First match wins.
+# First match wins. "Business Intelligence Analyst" must land in data, not
+# business, so the data pattern is checked before the business one.
 ROLE_FAMILY = [
-    ("java", JAVA),
-    ("fullstack", re.compile(r"full.?stack", re.I)),
-    ("platform", re.compile(r"platform|infrastructure|cloud|distributed systems", re.I)),
-    ("backend", re.compile(r"back.?end|server|\bapi\b|microservice|payments?", re.I)),
+    ("product", re.compile(r"product\s+(manager|management|owner|lead|analyst)", re.I)),
+    ("data", re.compile(
+        r"data\s+analy|analytics|business\s+intelligence|\bbi\b|reporting"
+        r"|insights?|\bmis\b|decision\s+analyst", re.I)),
+    ("business", re.compile(
+        r"business\s+(systems?\s+)?analy|\bba\b|systems?\s+analyst"
+        r"|functional|techno.?functional", re.I)),
 ]
 
 
@@ -151,14 +161,12 @@ def role_family(title: str) -> str:
     for name, pattern in ROLE_FAMILY:
         if pattern.search(title or ""):
             return name
-    return "software"          # generic SDE/SWE with no stack in the title
+    return "analyst"           # an analyst title that names no discipline
 
 
 def classify(title: str, include_staff: bool = False) -> str | None:
     """Return tier string if the title is in scope, else None."""
     if not title or ROLE_EXCLUDE.search(title) or JUNIOR.search(title):
-        return None
-    if OTHER_STACK.search(title) and not JAVA.search(title):
         return None
     if not ROLE_INCLUDE.search(title):
         return None
@@ -171,11 +179,12 @@ def classify(title: str, include_staff: bool = False) -> str | None:
     return "mid"
 
 
-# Stated experience bars outside this band are not a fit for ~6 years.
-# parse_yoe returns the LOWEST number in the posting ("4-8 years" -> 4), so a
-# floor of 2 only drops postings that are explicitly junior ("0-2 years").
+# Stated experience bars outside this band are not a fit for ~4+ years.
+# parse_yoe returns the LOWEST number in the posting ("5-8 years" -> 5), so a
+# floor of 2 only drops postings that are explicitly junior ("0-1 years"), and
+# a ceiling of 8 drops the ones that open at 9+ years (Director-level asks).
 YOE_MIN = 2
-YOE_MAX = 10
+YOE_MAX = 8
 
 
 def in_scope(job: dict, include_staff: bool = False) -> dict | None:

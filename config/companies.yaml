@@ -1,13 +1,16 @@
-# Company registry - India, Java backend / senior software engineer.
+# Company registry - India, Business Analyst / Data Analyst / Product Manager.
 #
 #   bigtech:      scanned every 2h on odd hours (so they get hourly cover
 #                 together with the full sweep)
 #   other:        scanned every 2h on even hours (the full sweep)
 #   aggregators:  job boards (LinkedIn, Naukri, Indeed) - full sweep
 #
-# Every entry below was probed live (Oct 2026) and returned postings located
-# in India. Counts in the comments are "India postings / in scope for a
-# senior Java backend engineer" on the day it was checked - they move daily.
+# Every company below was probed live (Oct 2026) and returned postings located
+# in India, so the registry carries over unchanged from the Java tracker; what
+# changed is WHAT is searched for (`searches:`) and which titles pass the
+# filter (monitor/filters.py). Boards that list everything (Greenhouse, Lever,
+# Ashby, SmartRecruiters) are filtered locally; keyword-search boards
+# (Workday, Amazon, Google) run one pass per search term.
 #
 # fetcher types: greenhouse | lever | ashby | workday | eightfold |
 #                smartrecruiters | amazon | google | microsoft | walmart |
@@ -27,379 +30,381 @@
 # search on Workday is relevance-ranked, so `searches:` runs one pass per term.
 
 x-searches: &search_terms
-  - java
-  - software engineer
-  - backend
+  - business analyst
+  - data analyst
+  - product manager
+  - business intelligence
 
 bigtech:
   - name: Amazon
-    fetcher: amazon               # 34 / 22
+    fetcher: amazon
     country: IND
-    searches: [java, software development engineer, backend]
+    categories: []                # every category: analyst/PM roles are not "software-development"
+    searches: [business analyst, data analyst, product manager, business intelligence]
   - name: Google
-    fetcher: google               # 105 / 17
+    fetcher: google
     location: India
-    searches: [software engineer, backend]
+    searches: [product manager, data analyst, business analyst]
   - name: Nvidia
-    fetcher: workday              # 149 / 50
+    fetcher: workday
     host: nvidia.wd5.myworkdayjobs.com
     tenant: nvidia
     site: NVIDIAExternalCareerSite
     searches: *search_terms
   - name: Adobe
-    fetcher: workday              # 80 / 13
+    fetcher: workday
     host: adobe.wd5.myworkdayjobs.com
     tenant: adobe
     site: external_experienced
     searches: *search_terms
   - name: Salesforce
-    fetcher: workday              # 106 / 1 (many MTS/SMTS, often PMTS)
+    fetcher: workday
     host: salesforce.wd12.myworkdayjobs.com
     tenant: salesforce
     site: External_Career_Site
     searches: *search_terms
   - name: Cisco
-    fetcher: workday              # 43 / 27
+    fetcher: workday
     host: cisco.wd5.myworkdayjobs.com
     tenant: cisco
     site: Cisco_Careers
     searches: *search_terms
   - name: Intel
-    fetcher: workday              # 21 / 7
+    fetcher: workday
     host: intel.wd1.myworkdayjobs.com
     tenant: intel
     site: External
     searches: *search_terms
   - name: eBay
-    fetcher: workday              # 81 / 30
+    fetcher: workday
     host: ebay.wd5.myworkdayjobs.com
     tenant: ebay
     site: apply
     searches: *search_terms
   - name: Expedia
-    fetcher: workday              # 27 / 12
+    fetcher: workday
     host: expedia.wd108.myworkdayjobs.com
     tenant: expedia
     site: search
     searches: *search_terms
   - name: Databricks
-    fetcher: greenhouse           # 94 / 17
+    fetcher: greenhouse
     token: databricks
   - name: Stripe
-    fetcher: greenhouse           # 41 / 2
+    fetcher: greenhouse
     token: stripe
   - name: Okta
-    fetcher: greenhouse           # 111 / 16
+    fetcher: greenhouse
     token: okta
   - name: MongoDB
-    fetcher: greenhouse           # 83 / 11
+    fetcher: greenhouse
     token: mongodb
   # Microsoft, Walmart Global Tech, Uber, Atlassian, Flipkart, PhonePe and
-  # Swiggy hire heavily for Java in India but have no careers API this repo
-  # can read (Microsoft's answers 403, the others are bespoke sites). They
+  # Swiggy hire heavily for analyst and product roles in India but have no
+  # careers API this repo can read (Microsoft's answers 403, the others are bespoke sites). They
   # are covered through the LinkedIn / Naukri searches under `aggregators`.
 
 other:
-  # --- banks & fintech global capability centres (Java-heavy) ---
+  # --- banks & fintech global capability centres (lots of BA / data roles) ---
   - name: Citi
-    fetcher: workday              # 283 / 51
+    fetcher: workday
     host: citi.wd5.myworkdayjobs.com
     tenant: citi
     site: "2"
     searches: *search_terms
   - name: Barclays
-    fetcher: workday              # 110 / 42
+    fetcher: workday
     host: barclays.wd3.myworkdayjobs.com
     tenant: barclays
     site: External_Career_Site_Barclays
     searches: *search_terms
   - name: Deutsche Bank
-    fetcher: workday              # 148 / 13
+    fetcher: workday
     host: db.wd3.myworkdayjobs.com
     tenant: db
     site: DBWebSite
     searches: *search_terms
   - name: Wells Fargo
-    fetcher: workday              # 100 / 17
+    fetcher: workday
     host: wf.wd1.myworkdayjobs.com
     tenant: wf
     site: WellsFargoJobs
     searches: *search_terms
   - name: Mastercard
-    fetcher: workday              # 64 / 32
+    fetcher: workday
     host: mastercard.wd1.myworkdayjobs.com
     tenant: mastercard
     site: CorporateCareers
     searches: *search_terms
   - name: State Street
-    fetcher: workday              # 150 / 16
+    fetcher: workday
     host: statestreet.wd1.myworkdayjobs.com
     tenant: statestreet
     site: Global
     searches: *search_terms
   - name: Morgan Stanley
-    fetcher: workday              # 102 / 1
+    fetcher: workday
     host: ms.wd5.myworkdayjobs.com
     tenant: ms
     site: External
     searches: *search_terms
   - name: BlackRock
-    fetcher: workday              # 20 / 1
+    fetcher: workday
     host: blackrock.wd1.myworkdayjobs.com
     tenant: blackrock
     site: BlackRock_Professional
     searches: *search_terms
   - name: Fidelity
-    fetcher: workday              # 11 / 0
+    fetcher: workday
     host: fmr.wd1.myworkdayjobs.com
     tenant: fmr
     site: FidelityCareers
     searches: *search_terms
   - name: Capital One
-    fetcher: workday              # 4 / 2
+    fetcher: workday
     host: capitalone.wd12.myworkdayjobs.com
     tenant: capitalone
     site: Capital_One
     searches: *search_terms
   - name: PayPal
-    fetcher: workday              # 7 / 0
+    fetcher: workday
     host: paypal.wd1.myworkdayjobs.com
     tenant: paypal
     site: jobs
     searches: *search_terms
   - name: Broadridge
-    fetcher: workday              # 38 / 6
+    fetcher: workday
     host: broadridge.wd5.myworkdayjobs.com
     tenant: broadridge
     site: Careers
     searches: *search_terms
   - name: Coinbase
-    fetcher: greenhouse           # 11 / 1
+    fetcher: greenhouse
     token: coinbase
   - name: Paytm
-    fetcher: lever                # 162 / 3
+    fetcher: lever
     token: paytm
   - name: Zeta
-    fetcher: lever                # 23 / 1
+    fetcher: lever
     token: zeta
   - name: CRED
-    fetcher: lever                # 8 / 0
+    fetcher: lever
     token: cred
   - name: Groww
-    fetcher: greenhouse           # 7 / 0
+    fetcher: greenhouse
     token: groww
   - name: Experian
-    fetcher: smartrecruiters      # 14 / 4
+    fetcher: smartrecruiters
     token: Experian
 
   # --- product companies & retail/tech centres ---
   - name: Nike
-    fetcher: workday              # 63 / 33
+    fetcher: workday
     host: nike.wd1.myworkdayjobs.com
     tenant: nike
     site: nke
     searches: *search_terms
   - name: Target
-    fetcher: workday              # 66 / 3
+    fetcher: workday
     host: target.wd5.myworkdayjobs.com
     tenant: target
     site: targetcareers
     searches: *search_terms
   - name: Lowe's
-    fetcher: workday              # 14 / 6
+    fetcher: workday
     host: lowes.wd5.myworkdayjobs.com
     tenant: lowes
     site: LWS_External_CS
     searches: *search_terms
   - name: Applied Materials
-    fetcher: workday              # 128 / 23
+    fetcher: workday
     host: amat.wd1.myworkdayjobs.com
     tenant: amat
     site: External
     searches: *search_terms
   - name: Athenahealth
-    fetcher: workday              # 34 / 5
+    fetcher: workday
     host: athenahealth.wd1.myworkdayjobs.com
     tenant: athenahealth
     site: External
     searches: *search_terms
   - name: Sabre
-    fetcher: workday              # 40 / 9
+    fetcher: workday
     host: sabre.wd1.myworkdayjobs.com
     tenant: sabre
     site: SabreJobs
     searches: *search_terms
   - name: HP
-    fetcher: workday              # 93 / 3
+    fetcher: workday
     host: hp.wd5.myworkdayjobs.com
     tenant: hp
     site: ExternalCareerSite
     searches: *search_terms
   - name: Workday
-    fetcher: workday              # 24 / 1
+    fetcher: workday
     host: workday.wd5.myworkdayjobs.com
     tenant: workday
     site: Workday
     searches: *search_terms
   - name: Autodesk
-    fetcher: workday              # 32 / 2
+    fetcher: workday
     host: autodesk.wd1.myworkdayjobs.com
     tenant: autodesk
     site: Ext
     searches: *search_terms
   - name: Motorola Solutions
-    fetcher: workday              # 6 / 1
+    fetcher: workday
     host: motorolasolutions.wd5.myworkdayjobs.com
     tenant: motorolasolutions
     site: Careers
     searches: *search_terms
   - name: Ciena
-    fetcher: workday              # 7 / 1
+    fetcher: workday
     host: ciena.wd5.myworkdayjobs.com
     tenant: ciena
     site: Careers
     searches: *search_terms
   - name: Thomson Reuters
-    fetcher: workday              # 5 / 0
+    fetcher: workday
     host: thomsonreuters.wd5.myworkdayjobs.com
     tenant: thomsonreuters
     site: External_Career_Site
     searches: *search_terms
   - name: Verizon
-    fetcher: workday              # 3 / 0
+    fetcher: workday
     host: verizon.wd12.myworkdayjobs.com
     tenant: verizon
     site: verizon-careers
     searches: *search_terms
   - name: Boeing
-    fetcher: workday              # 8 / 0
+    fetcher: workday
     host: boeing.wd1.myworkdayjobs.com
     tenant: boeing
     site: EXTERNAL_CAREERS
     searches: *search_terms
   - name: Red Hat
-    fetcher: workday              # 4 / 0
+    fetcher: workday
     host: redhat.wd5.myworkdayjobs.com
     tenant: redhat
     site: jobs
     searches: *search_terms
   - name: ServiceNow
-    fetcher: smartrecruiters      # 16 / 5
+    fetcher: smartrecruiters
     token: ServiceNow
   - name: Freshworks
-    fetcher: smartrecruiters      # 28 / 2
+    fetcher: smartrecruiters
     token: Freshworks
   - name: NielsenIQ
-    fetcher: smartrecruiters      # 22 / 0
+    fetcher: smartrecruiters
     token: NielsenIQ
 
   # --- SaaS, infra & startups with India engineering ---
   - name: GitLab
-    fetcher: greenhouse           # 28 / 3
+    fetcher: greenhouse
     token: gitlab
   - name: Toast
-    fetcher: greenhouse           # 20 / 3
+    fetcher: greenhouse
     token: toast
   - name: Fivetran
-    fetcher: greenhouse           # 17 / 3
+    fetcher: greenhouse
     token: fivetran
   - name: Rubrik
-    fetcher: greenhouse           # 32 / 2
+    fetcher: greenhouse
     token: rubrik
   - name: Zscaler
-    fetcher: greenhouse           # 84 / 2
+    fetcher: greenhouse
     token: zscaler
   - name: Agoda
-    fetcher: greenhouse           # 9 / 2
+    fetcher: greenhouse
     token: agoda
   - name: PubMatic
-    fetcher: greenhouse           # 34 / 4
+    fetcher: greenhouse
     token: pubmatic
   - name: HackerRank
-    fetcher: greenhouse           # 17 / 4
+    fetcher: greenhouse
     token: hackerrank
   - name: Sigmoid
-    fetcher: greenhouse           # 31 / 3
+    fetcher: greenhouse
     token: sigmoid
   - name: HighRadius
-    fetcher: greenhouse           # 52 / 5
+    fetcher: greenhouse
     token: highradius
   - name: Twilio
-    fetcher: greenhouse           # 10 / 1
+    fetcher: greenhouse
     token: twilio
   - name: Elastic
-    fetcher: greenhouse           # 14 / 1
+    fetcher: greenhouse
     token: elastic
   - name: New Relic
-    fetcher: greenhouse           # 9 / 1
+    fetcher: greenhouse
     token: newrelic
   - name: Yugabyte
-    fetcher: greenhouse           # 6 / 1
+    fetcher: greenhouse
     token: yugabyte
   - name: InMobi
-    fetcher: greenhouse           # 43 / 1
+    fetcher: greenhouse
     token: inmobi
   - name: Netskope
-    fetcher: greenhouse           # 22 / 0
+    fetcher: greenhouse
     token: netskope
   - name: Druva
-    fetcher: greenhouse           # 11 / 0
+    fetcher: greenhouse
     token: druva
   - name: Datadog
-    fetcher: greenhouse           # 8 / 0
+    fetcher: greenhouse
     token: datadog
   - name: Samsara
-    fetcher: greenhouse           # 6 / 0
+    fetcher: greenhouse
     token: samsara
   - name: Airbnb
-    fetcher: greenhouse           # 5 / 0
+    fetcher: greenhouse
     token: airbnb
   - name: Roblox
-    fetcher: greenhouse           # 11 / 0
+    fetcher: greenhouse
     token: roblox
   - name: Flexport
-    fetcher: greenhouse           # 8 / 0
+    fetcher: greenhouse
     token: flexport
   - name: Waymo
-    fetcher: greenhouse           # 5 / 2
+    fetcher: greenhouse
     token: waymo
   - name: Komodo Health
-    fetcher: greenhouse           # 6 / 0
+    fetcher: greenhouse
     token: komodohealth
   - name: Mixpanel
-    fetcher: greenhouse           # 4 / 0
+    fetcher: greenhouse
     token: mixpanel
   - name: Cloudflare
-    fetcher: greenhouse           # 1 / 0
+    fetcher: greenhouse
     token: cloudflare
   - name: Hevo Data
-    fetcher: lever                # 51 / 3
+    fetcher: lever
     token: hevodata
   - name: Meesho
-    fetcher: lever                # 57 / 1
+    fetcher: lever
     token: meesho
   - name: Mindtickle
-    fetcher: lever                # 16 / 1
+    fetcher: lever
     token: mindtickle
   - name: Sarvam AI
-    fetcher: ashby                # 59 / 3
+    fetcher: ashby
     token: sarvam
   - name: Notion
-    fetcher: ashby                # 4 / 2
+    fetcher: ashby
     token: notion
   - name: Snowflake
-    fetcher: ashby                # 13 / 0
+    fetcher: ashby
     token: snowflake
   - name: Harvey
-    fetcher: ashby                # 7 / 1
+    fetcher: ashby
     token: harvey
   - name: Atlan
-    fetcher: ashby                # 4 / 0
+    fetcher: ashby
     token: atlan
 
-  # --- IT services (very high volume - delete if it floods your channel) ---
+  # --- IT services (very high volume - BA roles abound; delete if it floods your channel) ---
   - name: Accenture
-    fetcher: workday              # 379 / 262
+    fetcher: workday
     host: accenture.wd103.myworkdayjobs.com
     tenant: accenture
     site: AccentureCareers
@@ -428,15 +433,16 @@ aggregators:
     fetch_description: false # true costs +1 request per job (see the module)
     proxies_env: JOBSPY_PROXIES
     searches: &board_terms
-      - senior java developer
-      - java backend developer
-      - senior software engineer java
-      - java spring boot microservices
-      - senior backend engineer
-      - sde 2 backend
-      - sde 3
-      - lead java developer
-      - java full stack developer
+      - senior business analyst
+      - business analyst
+      - technical business analyst
+      - senior data analyst
+      - data analyst
+      - business intelligence analyst
+      - product manager
+      - senior product manager
+      - product analyst
+      - product owner
   - name: Naukri (JobSpy)
     fetcher: jobspy
     sites: [naukri]

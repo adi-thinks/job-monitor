@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>India Java Jobs</title>
+<title>India BA / Data / Product Jobs</title>
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
 <header>
-  <h1 id="h1">India Java Jobs</h1>
+  <h1 id="h1">India BA / Data / Product Jobs</h1>
   <nav id="nav"></nav>
   <select id="fTier"><option value="">All tiers</option></select>
   <select id="fStatus"><option value="open">Open (new)</option><option value="applied">Applied</option>
@@ -16,6 +16,7 @@
   <select id="fRole"><option value="">All roles</option></select>
   <select id="fYoe">
     <option value="">Any experience</option>
+    <option value="3">&le; 3 yrs asked</option>
     <option value="4">&le; 4 yrs asked</option>
     <option value="5">&le; 5 yrs asked</option>
     <option value="6">&le; 6 yrs asked</option>
@@ -98,18 +99,18 @@
 //               categorical set - keep any replacement >=3:1 on the card
 //               surface and separated in CVD space
 window.TRACKER = {
-  title: "India Java Jobs",
+  title: "India BA / Data / Product Jobs",
   data: "data/jobs.json",
   path: "docs/data/jobs.json",
-  defaultRole: "software",
+  defaultRole: "analyst",
   tiers: [
-    ["mid", "SDE II / Mid", "#199e70"],
-    ["senior", "Senior / SDE III", "#d95926"],
-    ["lead", "Lead / Staff", "#8f6ad8"],
+    ["mid", "Analyst / PM", "#199e70"],
+    ["senior", "Senior Analyst / Sr PM", "#d95926"],
+    ["lead", "Lead / Manager", "#8f6ad8"],
   ],
   roles: {
-    "java":"Java / Spring", "backend":"Backend", "fullstack":"Full stack",
-    "platform":"Platform / Infra", "software":"Software (general)",
+    "business":"Business Analyst", "data":"Data / BI Analyst",
+    "product":"Product (PM / Owner / Analyst)", "analyst":"Analyst (general)",
   },
   siblings: [],
 };

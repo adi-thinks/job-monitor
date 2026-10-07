@@ -4,11 +4,11 @@ Usage:
   python -m monitor.main --tier bigtech            # big names only (odd hours)
   python -m monitor.main --tier all                # full sweep (even hours)
   python -m monitor.main --tier all --dry-run      # print, don't save/notify
-  python -m monitor.main --include-staff           # also admit Staff titles
+  python -m monitor.main --include-staff           # also admit Staff / Principal titles
 
 --profile picks which tracker to run (see monitor/profiles.py): its company
 registry, its role rules, its state file and its Discord webhook. There is one
-today (india-java), and it is the default.
+today (india-analyst), and it is the default.
 
 First run behavior: if the state file is empty, all found jobs are SEEDED
 into state without Discord notifications (avoids a 500-message flood).
@@ -33,8 +33,8 @@ def run_fetcher(company):
 
     Boards that only expose a keyword search (Workday, Eightfold, Amazon,
     Microsoft, Google, Walmart) return whatever ranks highest for one phrase,
-    and no single phrase covers a whole job family - "java" misses every
-    "Senior Software Engineer, Payments" on the same board. A `searches:`
+    and no single phrase covers a whole job family - "data analyst" misses every
+    "Senior Business Analyst, Payments" on the same board. A `searches:`
     list runs the fetcher once per term and merges the results, which is the
     difference between seeing a company's engineering org and seeing a corner
     of it. Postings repeat heavily across terms, so the union costs far less
@@ -87,7 +87,7 @@ def main():
                     help="save state but send no Discord messages (use after "
                          "repairing a fetcher, to absorb its backlog quietly)")
     ap.add_argument("--include-staff", action="store_true",
-                    help="widen the band: also admit Staff engineer titles")
+                    help="widen the band: also admit Staff / Principal titles")
     args = ap.parse_args()
 
     profile = profiles.get(args.profile)
