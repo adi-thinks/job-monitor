@@ -14,7 +14,7 @@ on:
     inputs:
       search:
         description: "Search term to probe with"
-        default: "senior java developer"
+        default: "senior business analyst"
       location:
         description: "Location to probe with"
         default: "India"

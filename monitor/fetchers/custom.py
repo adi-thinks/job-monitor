@@ -18,10 +18,18 @@ def _sched(value: str) -> str:
 
 
 def amazon(c):
-    """c: {search?, country?}  country is amazon.jobs' ISO-3 code (default IND)"""
+    """c: {search?, country?, categories?}
+
+    country is amazon.jobs' ISO-3 code (default IND). `categories` is a list
+    of amazon.jobs category slugs; it defaults to software-development (the
+    original Java tracker's scope). An empty list searches every category,
+    which is what analyst and product roles need - they sit outside it.
+    """
     s = session()
+    cats = c.get("categories", ["software-development"]) or []
+    cat_q = "".join(f"&category%5B%5D={x}" for x in cats)
     url = ("https://www.amazon.jobs/en/search.json?result_limit=100&sort=recent"
-           "&category%5B%5D=software-development"
+           f"{cat_q}"
            f"&country%5B%5D={c.get('country', 'IND')}"
            f"&base_query={c.get('search', 'software engineer').replace(' ', '+')}")
     data = get_json(s, url)

@@ -6,8 +6,9 @@ in, which dashboard reads that file, and which Discord webhook is notified.
 Everything else (fetchers, de-duplication, state, source health, prune) is
 profile-agnostic and shared.
 
-  india-java  - Java backend / senior software engineer roles in India,
-                tuned for ~6 years of experience (SDE II -> Lead).
+  india-analyst - Business Analyst / Data Analyst / Product Manager roles in
+                  India, tuned for ~4+ years of experience (Analyst/PM ->
+                  Senior -> Lead).
 
 Adding a second tracker (say, a different city or stack) is a Profile entry,
 a companies-*.yaml, a filters module, a dashboard page and a workflow - no
@@ -50,20 +51,20 @@ class Profile:
         return {k: color for k, _, color in self.tiers}
 
 
-DEFAULT = "india-java"
+DEFAULT = "india-analyst"
 
 PROFILES = {
-    "india-java": Profile(
-        key="india-java",
-        label="Java backend / Senior SWE - India",
+    "india-analyst": Profile(
+        key="india-analyst",
+        label="BA / Data Analyst / Product Manager - India",
         config="companies.yaml",
         state="jobs.json",
         dashboard="index.html",
         webhook_env="DISCORD_WEBHOOK_URL",
         rules=filters,
-        tiers=(("mid", "🛠 SDE II / Mid", 0x2ECC71),
-               ("senior", "🚀 Senior / SDE III", 0xE67E22),
-               ("lead", "🧭 Lead / Staff", 0x9B59B6)),
+        tiers=(("mid", "📊 Analyst / PM", 0x2ECC71),
+               ("senior", "🚀 Senior Analyst / Sr PM", 0xE67E22),
+               ("lead", "🧭 Lead / Manager", 0x9B59B6)),
     ),
 }
 
